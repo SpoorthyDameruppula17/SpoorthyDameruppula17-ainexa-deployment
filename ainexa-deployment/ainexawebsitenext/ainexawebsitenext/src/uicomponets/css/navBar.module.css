@@ -1,0 +1,49 @@
+.NavContainer {
+  width: 100%;
+  height: 8%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 3%;
+  position: relative;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  gap : 15%;
+  position: fixed;
+  left: 0;
+  top: 40;
+  z-index: 1000;
+}
+
+.LogoSection {
+  width: 20%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 100%;
+  gap: 5%;
+  position: relative;
+}
+
+.LogoIcon {
+  width: 50px;
+  height: 50px;
+}
+
+.NavButtons {
+  width: 75%;
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+
+.NavContainerWrapper {
+  display : flex ;
+  flex-direction : row ;
+  gap : 5% ;
+  width : 60%;
+  align-items : center;
+  height: 100%;
+}

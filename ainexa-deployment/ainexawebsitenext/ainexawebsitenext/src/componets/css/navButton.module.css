@@ -1,0 +1,84 @@
+.NavWrapper {
+  position: relative;
+  display: inline-block;
+  z-index: 1;
+  height: 100%;
+  padding: 0 10px;
+  transition: all 0.3s ease;
+  overflow: visible;
+  align-content: center;
+  transition: all 1s ease-in-out;
+}
+
+.NavButton {
+  display: flex;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  align-items: center;
+}
+
+.NavWrapper:hover {
+  border-radius: 8px;
+}
+
+.dropDown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, -20px) scale(0.95);
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(8px);
+  padding: 10px 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  transition: all 0.5s ease;
+  z-index: 1000;
+  min-width: 160px;
+  cursor: pointer;
+  display: none;
+}
+
+.NavWrapper:hover .dropDown {
+  display: flex;
+  transform: translate(-50%, 0px) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.icon {
+  padding-top: 5px;
+  font-size: 5px;
+  transition: transform 0.3s ease;
+}
+
+.NavWrapper:hover .icon {
+  transform: rotate(180deg) translateY(-2px);
+}
+
+.dropDown span {
+  padding: 5px 10px;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+  border-radius: 5px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.dropDown span:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+@media screen and (max-width: 500px) {
+  .dropDown {
+    display: none;
+    position: relative;
+    background-color: pink;
+  }
+  .active {
+    display: flex;
+  }
+}
