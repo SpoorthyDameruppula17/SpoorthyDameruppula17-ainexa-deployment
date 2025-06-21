@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: deploy
 
 on:
   push:
@@ -24,19 +24,16 @@ jobs:
 
       - name: Deploy via SSH
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${{ secrets.HOST }} << 'EOF'
-            sudo apt-get update
-            sudo apt-get install -y docker.io
-            sudo apt-get install -y docker-compose-plugin || \
-              curl -SL https://github.com/docker/compose/releases/download/v2.24.6/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose && \
-              chmod +x /usr/local/bin/docker-compose
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.HOST }} << 'EOF'
+            sudo apt update
+            sudo apt install -y docker.io curl
+            curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+            sudo ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
+            docker-compose version
 
-            # Clone repo if not already present
-            if [ ! -d "SpoorthyDameruppula17-ainexa-deployment" ]; then
-              git clone https://github.com/SpoorthyDameruppula17/SpoorthyDameruppula17-ainexa-deployment.git
-            fi
+            cd ~/SpoorthyDameruppula17-ainexa-deployment || git clone git@github.com:SpoorthyDameruppula17/SpoorthyDameruppula17-ainexa-deployment.git && cd SpoorthyDameruppula17-ainexa-deployment
 
-            cd SpoorthyDameruppula17-ainexa-deployment
             git pull origin main
+            docker compose down || true
             docker compose up -d --build
           EOF
