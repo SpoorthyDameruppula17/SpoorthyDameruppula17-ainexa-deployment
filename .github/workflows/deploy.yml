@@ -26,13 +26,20 @@ jobs:
         run: |
           ssh ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             sudo apt update
-            sudo apt install -y docker-compose-plugin
 
+            # Install Docker Compose manually (for Ubuntu 24.04)
+            sudo curl -L "https://github.com/docker/compose/releases/download/v2.24.5/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+            sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+
+            # Remove old directory if exists
             rm -rf ainexa-deployment
-            git clone git@github.com:SpoorthyDameruppula17/SpoorthyDameruppula17-ainexa-deployment.git
+
+            # Clone using HTTPS to avoid GitHub deploy key error
+            git clone https://github.com/SpoorthyDameruppula17/SpoorthyDameruppula17-ainexa-deployment.git
             cd SpoorthyDameruppula17-ainexa-deployment
 
-            docker compose down
-            docker compose build
-            docker compose up -d
+            docker-compose down || true
+            docker-compose build
+            docker-compose up -d
           EOF
