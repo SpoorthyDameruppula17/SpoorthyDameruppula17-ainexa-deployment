@@ -2,44 +2,29 @@ name: Deploy to EC2
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+    - name: Set up SSH key for EC2 access
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
 
-      - name: Add EC2 host to known_hosts
-        run: |
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+    - name: Add EC2 to known_hosts
+      run: |
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy via SSH
-        run: |
-          ssh ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
-            sudo apt update
-
-            # Install Docker Compose manually (for Ubuntu 24.04)
-            sudo curl -L "https://github.com/docker/compose/releases/download/v2.24.5/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
-            sudo chmod +x /usr/local/bin/docker-compose
-            sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-
-            # Remove old directory if exists
-            rm -rf ainexa-deployment
-
-            # Clone using HTTPS to avoid GitHub deploy key error
-            git clone https://github.com/SpoorthyDameruppula17/SpoorthyDameruppula17-ainexa-deployment.git
-            cd SpoorthyDameruppula17-ainexa-deployment
-
-            docker-compose down || true
-            docker-compose build
-            docker-compose up -d
-          EOF
+    - name: Deploy via SSH
+      run: |
+        ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+        ... your SSH deployment steps here ...
+        EOF
