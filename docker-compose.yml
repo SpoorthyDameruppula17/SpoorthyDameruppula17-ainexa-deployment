@@ -5,10 +5,8 @@ services:
     build: ./ainexawebsitenext/ainexawebsitenext
     ports:
       - "3000:3000"
-    restart: always
 
   backend:
-    build: ./backend
+    build: ./backend 1
     ports:
       - "5000:5000"
-    restart: always
