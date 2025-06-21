@@ -10,21 +10,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up SSH key for EC2 access
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
+      - name: Set up SSH key for EC2 access
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
-    - name: Add EC2 to known_hosts
-      run: |
-        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+      - name: Add EC2 to known_hosts
+        run: ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
-    - name: Deploy via SSH
-      run: |
-        ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
-        ... your SSH deployment steps here ...
-        EOF
+      - name: Deploy via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${{ secrets.HOST }} << 'EOF'
+            sudo apt-get update
+            sudo apt-get install -y docker.io
+            sudo apt-get install -y docker-compose-plugin || \
+              curl -SL https://github.com/docker/compose/releases/download/v2.24.6/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose && \
+              chmod +x /usr/local/bin/docker-compose
+
+            # Clone repo if not already present
+            if [ ! -d "SpoorthyDameruppula17-ainexa-deployment" ]; then
+              git clone https://github.com/SpoorthyDameruppula17/SpoorthyDameruppula17-ainexa-deployment.git
+            fi
+
+            cd SpoorthyDameruppula17-ainexa-deployment
+            git pull origin main
+            docker compose up -d --build
+          EOF
