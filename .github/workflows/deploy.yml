@@ -26,8 +26,10 @@ jobs:
         run: |
           ssh ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             rm -rf ainexa-deployment
+
             git clone https://github.com/SpoorthyDameruppula17/ainexa-deployment.git
-            cd ainexa-deployment
+            
+            cd SpoorthyDameruppula17-ainexa-deployment
             docker compose down
             docker compose build
             docker compose up -d
